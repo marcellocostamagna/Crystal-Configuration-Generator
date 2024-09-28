@@ -1,0 +1,12 @@
+name: crys_conf
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - numpy
+  - matplotlib
+  - pip
+  - pip:
+    - streamlit
+    - plotly
+
