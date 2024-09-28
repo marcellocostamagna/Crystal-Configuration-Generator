@@ -32,3 +32,13 @@ Once the environment is activated, you can run the script to generate configurat
 ```bash
 python generate_configurations.py
 ```
+
+## Run with Streamlit
+
+You can also interact with the Crystal Configuration Generator using a Streamlit web app interface.
+
+To run the app, in the `scripts` folder, use the following command:
+
+```bash
+streamlit run CCG.py
+```
