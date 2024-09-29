@@ -136,8 +136,8 @@ def plot_multiple_structures(structures, elevation=1.5, azimuth=1.5):
                 (44, 7), (44, 43), (44, 45), (44, 46),
                 (45, 43), (45, 44), (45, 46),
                 (46, 43), (46, 44), (46, 45),
-                (0, 47), (0, 49), (0, 51), (0, 53),
-                (47, 48), (49, 50), (51, 52), (53, 54),
+                # (0, 47), (0, 49), (0, 51), (0, 53),
+                # (47, 48), (49, 50), (51, 52), (53, 54),
             ]
         # Add connections between specified points (check if indices are valid)
         for start, end in connections:

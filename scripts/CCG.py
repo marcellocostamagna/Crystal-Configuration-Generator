@@ -18,10 +18,10 @@ coordinates_first_sphere = [
     [-1, 0, -1], 
     [0, 1, -1], 
     [0, 0, -2], 
-    [1, 1, 0], 
-    [1, -1, 0],
-    [-1, 1, 0], 
-    [-1, -1, 0]
+    [2, 0, 0], 
+    [-2, 0, 0],
+    [0, 2, 0], 
+    [0, -2, 0]
 ]
 
 coordinates_second_sphere = [
@@ -71,14 +71,14 @@ coordinates_second_sphere = [
     [-1, -2, -1],
     [0, -3, -1],
     [0, -2, -2], 
-    [1, 1, 0], 
-    [2, 2, 0], 
-    [-1, 1, 0], 
-    [-2, 2, 0],
-    [1, -1, 0],
-    [2, -2, 0], 
-    [-1, -1, 0],
-    [-2, -2, 0],
+    # [1, 1, 0], 
+    # [2, 2, 0], 
+    # [-1, 1, 0], 
+    # [-2, 2, 0],
+    # [1, -1, 0],
+    # [2, -2, 0], 
+    # [-1, -1, 0],
+    # [-2, -2, 0],
     
 ]
 
@@ -137,7 +137,7 @@ def generate_unique_configurations(num_br, total_positions=10, sphere=1):
 st.title("Crystal Configuration Generator")
 
 # Choose the coordination sphere
-sphere = st.selectbox('Select Coordination Sphere', [1, 2], format_func=lambda x: "1st Coordination Sphere (14 atoms)" if x == 1 else "2nd Coordination Sphere (54 atoms)")
+sphere = st.selectbox('Select Coordination Sphere', [1, 2], format_func=lambda x: "1st Coordination Sphere (14 atoms)" if x == 1 else "2nd Coordination Sphere (46 atoms)")
 
 # Choose the number of Bromine atoms based on the sphere
 if sphere == 1:
