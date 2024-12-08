@@ -42,3 +42,9 @@ To run the app, in the `scripts` folder, use the following command:
 ```bash
 streamlit run CCG.py
 ```
+
+## Run online
+
+The easiest way to run the Crystal Configuration Generator!
+
+https://crystal-configuration-generator-42dau7snrjleakmbof5pxd.streamlit.app/
