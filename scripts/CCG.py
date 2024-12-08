@@ -70,17 +70,20 @@ coordinates_second_sphere = [
     [1, -2, -1],
     [-1, -2, -1],
     [0, -3, -1],
-    [0, -2, -2], 
-    # [1, 1, 0], 
-    # [2, 2, 0], 
-    # [-1, 1, 0], 
-    # [-2, 2, 0],
-    # [1, -1, 0],
-    # [2, -2, 0], 
-    # [-1, -1, 0],
-    # [-2, -2, 0],
-    
+    [0, -2, -2],  
 ]
+
+coordinates_reduced_sphere = [
+    [1, 0, 1], 
+    [0, -1, 1], 
+    [-1, 0, 1], 
+    [0, 1, 1], 
+    [1, 0, -1],
+    [0, -1, -1],
+    [-1, 0, -1], 
+    [0, 1, -1], 
+]
+    
 
 def apply_permutation(configuration, permutation):
     return [configuration[i] for i in permutation]
@@ -137,15 +140,22 @@ def generate_unique_configurations(num_br, total_positions=10, sphere=1):
 st.title("Crystal Configuration Generator")
 
 # Choose the coordination sphere
-sphere = st.selectbox('Select Coordination Sphere', [1, 2], format_func=lambda x: "1st Coordination Sphere (14 atoms)" if x == 1 else "2nd Coordination Sphere (46 atoms)")
+sphere = st.selectbox('Select Coordination Sphere', 
+                      [1, 2, 3], 
+                      format_func=lambda x: "1st Coordination Sphere (14 atoms)" if x == 1 else
+                                            "2nd Coordination Sphere (42 atoms)" if x == 2 else 
+                                            "Reduced Coordination Sphere (8 atoms)") 
 
 # Choose the number of Bromine atoms based on the sphere
 if sphere == 1:
     num_br = st.slider('Select Number of Br Atoms (0-7)', 0, 7, 1)
     coordinates = coordinates_first_sphere
-else:
+elif sphere == 2:
     num_br = st.slider('Select Number of Br Atoms (0-27)', 0, 27, 1)
     coordinates = coordinates_second_sphere
+else:
+    num_br = st.slider('Select Number of Br Atoms (0-8)', 0, 8, 1)
+    coordinates = coordinates_reduced_sphere
 
 if st.button('Generate Configurations'):
     start = time.time()
