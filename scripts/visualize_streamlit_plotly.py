@@ -57,6 +57,7 @@ def plot_molecular_structure(coordinates, symbols, title, elevation=1.5, azimuth
     return fig
 
 
+
 # Define a function to plot multiple molecular structures using Plotly (sequentially in Streamlit)
 def plot_multiple_structures(structures, elevation=1.5, azimuth=1.5):
     figures = []  # List to hold all the individual figures
@@ -163,27 +164,108 @@ def plot_multiple_structures(structures, elevation=1.5, azimuth=1.5):
         aspect_ratio = calculate_aspect_ratio(coordinates)
 
         # Update layout with aspect ratio, initial orientation, and titles
+        # fig.update_layout(
+        #     title=f"{title}", #({ratio})" if ratio else title,
+        #     scene=dict(
+        #         xaxis_title='X axis',
+        #         yaxis_title='Y axis',
+        #         zaxis_title='Z axis',
+        #         aspectmode='manual',  # Set aspect mode to 'manual' for explicit control
+        #         aspectratio=aspect_ratio,  # Set calculated aspect ratio
+        #         camera=dict(
+        #             eye=dict(x=elevation, y=azimuth, z=1.25)  # Set initial camera position (closer view)
+        #         )
+        #     ),
+        #     margin=dict(l=0, r=0, b=0, t=40)
+        # )
+        
         fig.update_layout(
-            title=f"{title}", #({ratio})" if ratio else title,
-            scene=dict(
-                xaxis_title='X axis',
-                yaxis_title='Y axis',
-                zaxis_title='Z axis',
-                aspectmode='manual',  # Set aspect mode to 'manual' for explicit control
-                aspectratio=aspect_ratio,  # Set calculated aspect ratio
-                camera=dict(
-                    eye=dict(x=elevation, y=azimuth, z=1.25)  # Set initial camera position (closer view)
-                )
+        title=title,
+        scene=dict(
+            xaxis=dict(
+                title='',          # Remove X axis title
+                showgrid=False,    # Remove grid lines for X axis
+                showticklabels=False,  # Remove tick labels for X axis
+                zeroline=False,     # Remove the zero line for X axis
+                visible=False # Remove tick labels for X axis
+            ),
+            yaxis=dict(
+                title='',          # Remove Y axis title
+                showgrid=False,    # Remove grid lines for Y axis
+                showticklabels=False,  # Remove tick labels for X axis
+            zeroline=False,     # Remove the zero line for X axis
+            visible=False
+            ),
+            zaxis=dict(
+                title='',          # Remove Z axis title
+                showgrid=False,    # Remove grid lines for Z axis
+                showticklabels=False,  # Remove tick labels for X axis
+            zeroline=False,     # Remove the zero line for X axis
+            visible=False
+            ),
+            aspectmode='manual',  # Ensures that the aspect ratio is explicitly set
+            aspectratio=aspect_ratio,  # Set calculated aspect ratio
+            camera=dict(
+                eye=dict(x=elevation, y=azimuth, z=1.25)  # Adjusted camera position for closer view
+            )
             ),
             margin=dict(l=0, r=0, b=0, t=40)
         )
-
-        # If additional data is provided, display it in the plot title
-        # if data:
-        #     fig.update_layout(title=f"{title} ({ratio}), {data}" if ratio else f"{title}, {data}")
 
         # Append the generated figure to the list
         figures.append(fig)
 
     # Return the list of Plotly figures
     return figures
+
+
+def plot_molecular_structure(coordinates, symbols, title, elevation=1.5, azimuth=1.5):
+    fig = go.Figure()
+
+    # Define a color map based on the labels
+    color_map = {'I': 'red', 'Br': 'blue'}
+
+    # Add scatter plot for atoms
+    for i, c in enumerate(coordinates):
+        color = color_map[symbols[i]]
+        fig.add_trace(go.Scatter3d(
+            x=[c[0]], y=[c[1]], z=[c[2]],
+            mode='markers+text',
+            marker=dict(size=10, color=color),
+            text=f'{symbols[i]} {i}',
+            textposition='top center'
+        ))
+
+    # Calculate aspect ratio based on the coordinates
+    aspect_ratio = calculate_aspect_ratio(coordinates)
+
+    # Set equal aspect ratio, initial orientation, and titles
+    fig.update_layout(
+        title=title,
+        scene=dict(
+            xaxis=dict(
+                title='',          # Remove X axis title
+                showgrid=False,    # Remove grid lines for X axis
+                showticklabels=False  # Remove tick labels for X axis
+            ),
+            yaxis=dict(
+                title='',          # Remove Y axis title
+                showgrid=False,    # Remove grid lines for Y axis
+                showticklabels=False  # Remove tick labels for Y axis
+            ),
+            zaxis=dict(
+                title='',          # Remove Z axis title
+                showgrid=False,    # Remove grid lines for Z axis
+                showticklabels=False  # Remove tick labels for Z axis
+            ),
+            aspectmode='manual',  # Ensures that the aspect ratio is explicitly set
+            aspectratio=aspect_ratio,  # Set calculated aspect ratio
+            camera=dict(
+                eye=dict(x=elevation, y=azimuth, z=1.25)  # Adjusted camera position for closer view
+            )
+        ),
+        margin=dict(l=0, r=0, b=0, t=40)
+    )
+
+    # Return the Plotly figure to be rendered in Streamlit
+    return fig
