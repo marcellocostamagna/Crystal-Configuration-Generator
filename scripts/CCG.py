@@ -146,6 +146,9 @@ sphere = st.selectbox('Select Coordination Sphere',
                                             "2nd Coordination Sphere (42 atoms)" if x == 2 else 
                                             "Reduced Coordination Sphere (8 atoms)") 
 
+# Add a button to choose if to display the axis or not
+show_axis = st.checkbox('Show Axis', value=True)
+
 # Choose the number of Bromine atoms based on the sphere
 if sphere == 1:
     num_br = st.slider('Select Number of Br Atoms (0-7)', 0, 7, 1)
@@ -206,13 +209,10 @@ if st.button('Generate Configurations'):
         full_coordinates = [[0, 0, 0]] + coordinates  # Add central Iodine atom coordinates
         structures.append((full_coordinates, symbols, title))
 
-    # Visualize the structures
-    # figures = vis.plot_multiple_structures(structures, 
-    #                                        main_title='Unique Configurations', 
-    #                                        ratio=f'N˚ of Br atoms: {num_br} ; N˚ of I atoms: {len(coordinates) - num_br}',
-    #                                        data=f'Total number of configurations: {n_config} ; Number of unique configurations: {total_unique_configs}')
-    
-    figures = vis.plot_multiple_structures(structures)
+    if show_axis:
+        figures = vis.plot_multiple_structures(structures, elevation=1.5, azimuth=1.5, show_axis=True)
+    else:
+        figures = vis.plot_multiple_structures(structures, elevation=1.5, azimuth=1.5, show_axis=False)
                  
     # Render each figure using st.plotly_chart
     for fig in figures:
