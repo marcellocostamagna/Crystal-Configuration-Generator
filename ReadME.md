@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **Crystal Configuration Generator** is a Python-based tool designed to generate and visualize different configurations of crystal structures with different ratios of Halogen atoms (i.e., Br/I ratio). This information is useful to inverstigate behaviors of lead perovskite crystal, studied for ther interesting photovoltaic properties. 
+The **Crystal Configuration Generator** is a Python-based tool designed to generate and visualize different configurations of crystal structures with different ratios of Halogen atoms (i.e., Br/I ratio). This information is useful to investigate behaviors of lead-based perovskite crystal; studied for their interesting photovoltaic properties. 
 Users can modify the "coordination sphere" and the number of Bromine (Br) atoms in the script to generate unique configurations. The generator uses symmetry operations to normalize configurations and reduce redundancy.
 
 Here are the geometries currently available
