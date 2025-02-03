@@ -4,7 +4,9 @@
 
 The **Crystal Configuration Generator** is a Python-based tool designed to generate and visualize different configurations of crystal structures. Users can modify the coordination sphere and the number of Bromine (Br) atoms in the script to generate unique configurations. The generator uses symmetry operations to normalize configurations and reduce redundancy.
 
+Here are the geometries currently available
 
+![Alt text](img/cord_sphere_img.png)
 
 ---
 
