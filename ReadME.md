@@ -8,7 +8,7 @@ You can use the generator both as a **command-line script** or a **Streamlit web
 
 Currently available geometries
 
-![Alt text](img/Coordination_soheres.svg)
+![Alt text](img/Coordination_soheres.png)
 
 ---
 
