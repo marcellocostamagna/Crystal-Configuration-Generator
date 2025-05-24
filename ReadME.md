@@ -6,7 +6,7 @@ The **Crystal Configuration Generator** is a Python toolkit for enumerating and 
 
 You can use the generator both as a **command-line script** or a **Streamlit web app**.
 
-Currently available geometries
+Currently available geometries:
 
 ![Alt text](img/Coordination_spheres.png)
 

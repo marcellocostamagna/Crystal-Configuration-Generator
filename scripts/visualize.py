@@ -16,7 +16,7 @@ def get_connections(num_atoms):
             (0, 11), (0, 12), (0, 13), (0, 14)
         ]
     elif num_atoms == 47:
-        return [
+        return  [
             (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8), (0, 9),
             (1, 2), (1, 3), (1, 4), (1, 5),
             (2, 3), (2, 5), (2, 11), (2, 12), (2, 14), (2, 15),
@@ -51,8 +51,8 @@ def get_connections(num_atoms):
             (40, 42),
             (41, 42), 
             (43, 45), (43, 46),
-            (44, 45), (44, 46), 
-        ]
+            (44, 45), (44, 46), (45, 46),
+            ]
     else:
         return [
             (0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (0, 6), (0, 7), (0, 8),
@@ -108,3 +108,4 @@ def save_structures_as_svgs(structures, outdir, prefix='', elevation=20, azimuth
         filepath = os.path.join(outdir, filename)
         plt.savefig(filepath, format='svg')
         plt.close(fig)
+        

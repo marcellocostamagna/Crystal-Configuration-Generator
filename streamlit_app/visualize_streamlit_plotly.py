@@ -176,7 +176,7 @@ def plot_multiple_structures(structures, elevation=1.5, azimuth=1.5, show_axis=F
                 (40, 42),
                 (41, 42), 
                 (43, 45), (43, 46),
-                (44, 45), (44, 46), 
+                (44, 45), (44, 46), (45, 46),
             ]
         else:
             connections = [

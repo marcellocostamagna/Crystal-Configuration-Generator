@@ -82,7 +82,7 @@ if sphere == 1:
     num_br = st.slider('Number of Br Atoms', 0, 7, 1)
     coordinates = coordinates_first_sphere
 elif sphere == 2:
-    num_br = st.slider('Number of Br Atoms', 0, 27, 1)
+    num_br = st.slider('Number of Br Atoms', 0, 28, 1)
     coordinates = coordinates_second_sphere
 else:
     num_br = st.slider('Number of Br Atoms', 0, 4, 1)
