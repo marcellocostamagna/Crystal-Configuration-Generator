@@ -1,216 +1,145 @@
+"""
+Script to enumerate unique configurations of Br/I for selected 'coordination spheres'.
+"""
+
+import time
 import sym_operations as sym
 import define_permutations as pr
 import visualize as vis
-import time
-import multiprocessing as mp
-from itertools import combinations
+from fast_enum import enumerate_unique
+from burnside import burnside_count, prepare_cycle_cache 
+import argparse
 
-# First coordination sphere (10 atoms)
-coordinates_first_sphere = [ 
-    [0, 0, 2],   # 1
-    [1, 0, 1],   # 2
-    [0, -1, 1],  # 3  
-    [-1, 0, 1],  # 4 
-    [0, 1, 1],   # 5
-    [1, 0, -1],  # 6
-    [0, -1, -1], # 7 
-    [-1, 0, -1], # 8
-    [0, 1, -1],  # 9
-    [0, 0, -2],  # 10
-     # Adding the 4 alogens equatorial atoms
-    [1, 1, 0],
-    [1, -1, 0],
-    [-1, 1, 0],
-    [-1, -1, 0]
+############################
+# === COORDINATE LIBRARIES
+############################
+coordinates_first_sphere = [
+    [0, 0, 2],
+    [1, 0, 1], [0, -1, 1], [-1, 0, 1], [0, 1, 1],
+    [1, 0, -1], [0, -1, -1], [-1, 0, -1], [0, 1, -1],
+    [0, 0, -2], [2, 0, 0], [-2, 0, 0], [0, 2, 0], [0, -2, 0],
 ]
 
-# Second coordination sphere (50 atoms)
-coordinates_second_sphere = [ 
-    # [0, 0, 0],  # Always an Iodine atom
-    [0, 0, 2],   
-    [1, 0, 1],   
-    [0, -1, 1],    
-    [-1, 0, 1],   
-    [0, 1, 1],   
-    [1, 0, -1],  
-    [0, -1, -1],  
-    [-1, 0, -1], 
-    [0, 1, -1],  
-    [0, 0, -2],  
-    # second double-octaehdron traslated by 2 units in the x direction (less the same atoms)
-    [2, 0, 0],
-    [2, 0, 2],   
-    [3, 0, 1],   
-    [2, -1, 1],    
-    [2, 1, 1],   
-    [3, 0, -1],  
-    [2, -1, -1],  
-    [2, 1, -1],  
-    [2, 0, -2],  
-    # third double-octaehdron traslated by 2 units in the y direction
-    [0, 2, 0],   
-    [0, 2, 2],   
-    [1, 2, 1],   
-    [-1, 2, 1],   
-    [0, 3, 1],   
-    [1, 2, -1],  
-    [-1, 2, -1], 
-    [0, 3, -1],  
-    [0, 2, -2],  
-    # fourth double-octaehdron traslated by 2 units in the -x direction
-    [-2, 0, 0],   
-    [-2, 0, 2],   
-    [-3, 0, 1],   
-    [-2, -1, 1],    
-    [-2, 1, 1],   
-    [-3, 0, -1],  
-    [-2, -1, -1],  
-    [-2, 1, -1],  
-    [-2, 0, -2],  
-    # fifth double-octaehdron traslated by 2 units in the -y direction
-    [0, -2, 0],   
-    [0, -2, 2],   
-    [1, -2, 1],   
-    [-1, -2, 1],   
-    [0, -3, 1],   
-    [1, -2, -1],  
-    [-1, -2, -1], 
-    [0, -3, -1],  
-    [0, -2, -2],  
-    # four corner atoms
-    [1, 1, 0],
-    [2, 2, 0],   
-    [1, -1, 0],
-    [-2, 2, 0],  
-    [-1, 1, 0],
-    [2, -2, 0], 
-    [-1, -1, 0], 
-    [-2, -2, 0],    
+coordinates_second_sphere = [
+    [0, 0, 2], [1, 0, 1], [0, -1, 1], [-1, 0, 1], [0, 1, 1],
+    [1, 0, -1], [0, -1, -1], [-1, 0, -1], [0, 1, -1], [0, 0, -2],
+    [2, 0, 0], [2, 0, 2], [3, 0, 1], [2, -1, 1], [2, 1, 1],
+    [3, 0, -1], [2, -1, -1], [2, 1, -1], [2, 0, -2],
+    [0, 2, 0], [0, 2, 2], [1, 2, 1], [-1, 2, 1], [0, 3, 1],
+    [1, 2, -1], [-1, 2, -1], [0, 3, -1], [0, 2, -2],
+    [-2, 0, 0], [-2, 0, 2], [-3, 0, 1], [-2, -1, 1], [-2, 1, 1],
+    [-3, 0, -1], [-2, -1, -1], [-2, 1, -1], [-2, 0, -2],
+    [0, -2, 0], [0, -2, 2], [1, -2, 1], [-1, -2, 1], [0, -3, 1],
+    [1, -2, -1], [-1, -2, -1], [0, -3, -1], [0, -2, -2],
 ]
 
-# Normalize configurations
-def apply_permutation(configuration, permutation):
-    return [configuration[i] for i in permutation]
+coordinates_reduced_sphere = [
+    [1, 0, 1], [0, -1, 1], [-1, 0, 1], [0, 1, 1],
+    [1, 0, -1], [0, -1, -1], [-1, 0, -1], [0, 1, -1],
+]
 
-def normalize_configuration(configuration, symmetry_operations):
-    equivalent_configs = [apply_permutation(configuration, op) for op in symmetry_operations]
-    return min(equivalent_configs)
+ENUM_MAX = 30_000_000  # switch to Burnside above this many total configs
 
-# Normalization function to be run in parallel
-def process_permutations(data):
-    perms, permutations = data
-    unique_configs = {}
-    for perm in perms:
-        normalized_config = tuple(normalize_configuration(list(perm), permutations))
-        if normalized_config not in unique_configs:
-            unique_configs[normalized_config] = 0
-        unique_configs[normalized_config] += 1
-    return unique_configs
+def get_unique_configs(n_br, coords, perms, enum_max=ENUM_MAX, sphere=1):
+    """
+    Enumerate unique configurations for placing `n_br` Br atoms among the given coordinates,
+    using symmetry operations specified by `perms`.
 
-def generate_combinations(total_positions, num_br):
-    # Choose the positions for Br
-    for br_positions in combinations(range(total_positions), num_br):
-        # Create a list of all 'I's
-        elements_list = ['I'] * total_positions
-        # Place 'Br' at the chosen positions
-        for pos in br_positions:
-            elements_list[pos] = 'Br'
-        # Yield the current combination of Br and I as a tuple (tuples are hashable)
-        yield tuple(elements_list)
+    Tries direct enumeration if the total number of configurations is less than `enum_max`.
+    If the enumeration would be too large, uses Burnside's lemma for counting only.
 
-def generate_unique_configurations(num_br, total_positions=10, sphere=1):
-    
-    # Generate all possible combinations of Br and I
-    all_combinations= set(generate_combinations(total_positions, num_br))
-        
-    total_combinations = len(all_combinations)
-    # print(f'Total number of combinations: {total_combinations}')
+    Parameters
+    ----------
+    n_br : int
+        Number of Br atoms to place.
+    coords : list of lists
+        List of coordinate positions (for all sites).
+    perms : list of lists
+        List of permutations (symmetry operations).
+    enum_max : int, optional
+        Maximum number of configurations for explicit enumeration (default: 30,000,000).
+    sphere : int, optional
+        Sphere identifier, used for Burnside cache (default: 1).
 
-    # Get D4h symmetry operations and permutations
-    operations = sym.D4h_symmetry_operations()
-    permutations = list(pr.find_all_permutations(operations, coordinates).values())
-    
-    # Set up multiprocessing
-    num_processes = mp.cpu_count()
-    pool = mp.Pool(processes=num_processes)
-    chunk_size = max(1, len(all_combinations) // num_processes)
-    chunks = [list(all_combinations)[i:i + chunk_size] for i in range(0, len(all_combinations), chunk_size)]
-    
-    # Map multiprocessing
-    result_dicts = pool.map(process_permutations, [(chunk, permutations) for chunk in chunks])
-    
-    # Combine results
-    unique_configs = {}
-    for result in result_dicts:
-        for config, count in result.items():
-            if config not in unique_configs:
-                unique_configs[config] = 0
-            unique_configs[config] += count
-            
-    pool.close()
-    pool.join()
-    
-    return unique_configs, total_combinations
+    Returns
+    -------
+    uniq_dict : dict
+        Dictionary mapping canonical configuration to degeneracy, or empty if Burnside's lemma is used.
+    n_unique : int
+        Number of unique configurations.
+    n_total : int
+        Total number of possible configurations.
+    """
+    n_sites = len(coords)
+    uniq_dict, n_total = enumerate_unique(n_sites, n_br, perms, enum_max)
+    if uniq_dict is None:  
+        n_unique = burnside_count(n_sites, n_br, sphere=sphere, perms=perms)
+        return {}, n_unique, n_total
+    n_unique = len(uniq_dict)
+    return uniq_dict, n_unique, n_total
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Enumerate unique Br/I configurations and optionally save as SVG."
+    )
+    parser.add_argument("--sphere", type=int, default=1, choices=[1,2,3],
+                        help="Which sphere to use: 1=first, 2=second, 3=reduced (default: 1)")
+    parser.add_argument("--nbr", type=int, default=2, help="Number of Br atoms (default: 2)")
+    parser.add_argument("--enum-max", type=int, default=30_000_000,
+                        help="Switch to Burnside above this number of configs (default: 30,000,000)")
+    parser.add_argument("--save-svg", "-s", action='store_true',
+                        help="Save each structure as an SVG in a folder.")
 
-if __name__ == '__main__':
-    ##### Define Initial Input #####
+    args = parser.parse_args()
 
-    ## COORDINATES OF THE SYSTEM ##
-    
-    # choose first or second coordination sphere
-    sphere = 2
-    
-    if sphere == 1:
+    SPHERE = args.sphere
+    N_BR = args.nbr
+    ENUM_MAX = args.enum_max
+
+    if SPHERE == 1:
         coordinates = coordinates_first_sphere
-    elif sphere == 2:
+    elif SPHERE == 2:
         coordinates = coordinates_second_sphere
-        
-    ## NUMBER OF BROMINE ATOMS ##
-    # Define the number of Br atoms (example: 1 Br)
-    num_br = 1
+    elif SPHERE == 3:
+        coordinates = coordinates_reduced_sphere
+    else:
+        raise ValueError("Sphere must be 1, 2 or 3")
+
     start = time.time()
+    ops   = sym.D4h_symmetry_operations()
+    perms = list(pr.find_all_permutations(ops, coordinates).values())
 
-    # Generate and print unique configurations and their degeneracy
-    unique_configs, n_config = generate_unique_configurations(num_br, total_positions=len(coordinates), sphere=sphere)
+    try:
+        _ = burnside_count(len(coordinates), 0, sphere=SPHERE)
+    except RuntimeError:
+        print(f"Burnside cache for sphere={SPHERE} not found. Creating it now...")
+        prepare_cycle_cache(perms, sphere=SPHERE)
+        print("...Burnside cache created!")
 
-    end = time.time()
+    deg_dict, n_unique, n_total = get_unique_configs(
+        N_BR, coordinates, perms, enum_max=ENUM_MAX, sphere=SPHERE
+    )
 
-    # # Print the results
-    # print("\nUnique configurations and their degeneracy:")
-    # for config, degeneracy in unique_configs.items():
-    #     print(f"Configuration: {config}, Degeneracy: {degeneracy}")
+    elapsed = time.time() - start
 
-    total_unique_configs = len(unique_configs)
-  
+    print(f"Br atoms: {N_BR} on {len(coordinates)} sites")
+    print(f"Total configurations:  {n_total:,}")
+    print(f"Unique configurations: {n_unique:,}")
+    print(f"Elapsed time: {elapsed:.2f} s")
 
-    ## VISUALIZE THE MOLECULAR STRUCTURES ##
-    structures = []
-    for idx, (config, degeneracy) in enumerate(unique_configs.items()):
-        symbols = ['I'] * (len(coordinates) + 1)  # Initialize all as 'I' and add the central Iodine atom
-        symbols[0] = 'I'  # Add central Iodine atom
-        for i, atom in enumerate(config):
-            symbols[i + 1] = atom  # Adjust indices to account for the central Iodine atom
-        title = f'Config {idx + 1}: Degeneracy {degeneracy}'
-        full_coordinates = [[0, 0, 0]] + coordinates  # Add central Iodine atom coordinates
-        structures.append((full_coordinates, symbols, title))
-        
-    # Get the total number of configurations for the give number of Br and the number of unique configurations
-    tot_config = sum(unique_configs.values())
-    n_unq_config = len(unique_configs)
+    # === Save SVGs if requested and possible ===
+    if deg_dict and args.save_svg:
+        structures = []
+        for idx, (config_int, degeneracy) in enumerate(deg_dict.items()):
+            bits = [(config_int >> i) & 1 for i in range(len(coordinates))]
+            symbols = ['I'] * (len(coordinates) + 1)
+            for i, b in enumerate(bits):
+                symbols[i + 1] = 'Br' if b else 'I'
+            title = f"Config {idx+1}: deg {degeneracy}"
+            full_coords = [[0, 0, 0]] + coordinates
+            structures.append((full_coords, symbols, title))
 
-    # Check that there are all the possible configurations
-    print(f"\nTotal number of configurations: {tot_config}")
-    print(f"\nTotal number of unique configurations: {total_unique_configs}")
-    print(f"Time taken: {end - start:.2f} seconds")
-
-    assert tot_config == n_config, f"Error: Total number of configurations ({tot_config}) does not match the expected number ({n_config})"
-
-    # # Plot the unique configurations
-    vis.plot_multiple_structures(structures, 
-                                main_title='Unique Configurations', 
-                                ratio=f'N˚ of Br atoms: {num_br} ; N˚ of I atoms: {len(coordinates) - num_br}',
-                                data=f'Total number of configurations: {tot_config} ; Number of unique configurations: {n_unq_config}')
-
-    end = time.time()
-    print(f"Time taken to generate unique configurations: {end - start:.2f} seconds")
+        svg_dir = f"svg_configs_sphere{SPHERE}_Br{N_BR}_I{len(coordinates)-N_BR}"
+        prefix = f"Br{N_BR}_I{len(coordinates)-N_BR}"
+        vis.save_structures_as_svgs(structures, svg_dir, prefix=prefix)
+        print(f"SVG images saved in folder: {svg_dir}")
