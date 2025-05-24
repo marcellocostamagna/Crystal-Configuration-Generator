@@ -2,10 +2,11 @@
 
 ## Overview
 
-The **Crystal Configuration Generator** is a Python-based tool designed to generate and visualize different configurations of crystal structures with different ratios of Halogen atoms (i.e., Br/I ratio). This information is useful to investigate behaviors of lead-based perovskite crystal; studied for their interesting photovoltaic properties. 
-Users can modify the "coordination sphere" and the number of Bromine (Br) atoms in the script to generate unique configurations. The generator uses symmetry operations to normalize configurations and reduce redundancy.
+The **Crystal Configuration Generator** is a Python toolkit for enumerating and visualizing unique atomic configurations in lead-halide perovskite coordination spheres with variable Br/I (bromine/iodine) ratios. This information is useful for investigating the behavior of lead-based perovskite crystals, which are widely studied for their interesting photovoltaic properties.
 
-Here are the geometries currently available
+You can use the generator both as a **command-line script** or a **Streamlit web app**.
+
+Currently available geometries
 
 ![Alt text](img/cord_sphere_img.png)
 
@@ -14,7 +15,6 @@ Here are the geometries currently available
 ## Installation
 
 ### 1. Clone the Repository
-First, clone the repository to your local machine:
 ```bash
 git clone https://github.com/yourusername/crystal-config-generator.git
 cd crystal-config-generator
@@ -22,34 +22,58 @@ cd crystal-config-generator
 
 ### 2. Set up the Conda Environment
 
-This project uses a Conda environment, so you’ll need to install dependencies from the `environment.yml` file. Run the following commands to set up the environment:
+Install dependencies with:
 
 ```bash
 conda env create -f environment.yml
 conda activate crys_conf
 ```
-This will create a Conda environment named `crys_conf` with all required dependencies.
+## Usage
 
-## Running the Script
+### Command-Line Script
 
-Once the environment is activated, you can run the script to generate configurations:
+To enumerate unique configurations for a chosen coordination sphere and Br content:
 
 ```bash
-python generate_configurations.py
+python scripts/get_configurations.py --sphere 1 --nbr 2 --save-svg
 ```
+- `--sphere` Select the coordination sphere: 1 (first), 2 (second), 3 (reduced).
+- `--nbr`  Number of Br atoms.
+- `--save-svg` Save SVG images of all unique configurations (if not too many).
+- See `python scripts/get_configurations.py --help` for all options
 
-## Run with Streamlit
+SVG images will be saved in a new folder if requested.
 
-You can also interact with the Crystal Configuration Generator using a Streamlit web app interface.
 
-To run the app, in the `scripts` folder, use the following command:
+### Streamlit Web App
+
+Interactive visualization and exploration:
 
 ```bash
+cd streamlit_app
 streamlit run CCG.py
 ```
+You can select:
+- The coordination sphere,
 
-## Run online
+- The number of Br atoms,
 
-The easiest way to run the Crystal Configuration Generator!
+- Whether to show axes,
+
+- The maximum number of configurations to enumerate/visualize.
+
+Note: For large cases, only statistics are shown (no plotting) to keep the interface responsive.
+
+### Online Demo
+
+Try the app instantly (no installation needed):
 
 https://crystal-configuration-generator-42dau7snrjleakmbof5pxd.streamlit.app/
+
+## Handling Large Configuration Spaces
+
+When the number of possible atomic configurations becomes very large, the Crystal Configuration Generator automatically switches to a fast combinatorial method (Burnside’s lemma) to efficiently count unique configurations. In these cases, the program provides summary statistics only—including the total number of configurations and the number of unique configurations—without generating or visualizing individual structures. This ensures results are returned quickly and prevents memory or performance issues.
+
+## License
+
+CCG is licensed under the [GNU Affero General Public License Version 3](https://www.gnu.org/licenses/agpl-3.0.html). For more details, see the LICENSE file.
