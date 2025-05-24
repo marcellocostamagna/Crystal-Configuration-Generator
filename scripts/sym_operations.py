@@ -1,8 +1,13 @@
+"""
+Script for symmetry operations in 3D space and their collection in symmetry groups.
+"""
+
 import numpy as np
 
 ### Symmetry operations in 3D space ###
 
 def rotation_matrix(axis, angle_degrees):
+    """Returns 3x3 rotation matrix for rotation about given axis (unit vector)."""
     angle_radians = np.radians(angle_degrees)
     axis = np.asarray(axis)
     axis = axis / np.linalg.norm(axis)
@@ -15,79 +20,49 @@ def rotation_matrix(axis, angle_degrees):
     ])
 
 def reflection_matrix(normal):
+    """Returns reflection matrix across plane with given normal."""
     normal = np.asarray(normal)
     normal = normal / np.linalg.norm(normal)
     return np.eye(3) - 2 * np.outer(normal, normal)
 
 def inversion_matrix():
+    """Returns inversion (origin-centered) matrix."""
     return -np.eye(3)
 
 def improper_rotation_matrix(axis, angle_degrees):
+    """Returns improper rotation: rotate, then reflect through plane perpendicular to axis."""
     rotation = rotation_matrix(axis, angle_degrees)
     reflection = reflection_matrix(axis)
     return np.dot(reflection, rotation)
 
 # Application of symmetry operations to a set of coordinates
 def apply_symmetry_operation(operation, coordinates):
+    """Applies symmetry operation matrix to all coordinates (Nx3 array or list)."""
     return np.dot(coordinates, operation.T)
 
 
-### Construction of symmetry operations for a symmmetry group ### (Only D4h is implemented) #TODO: Implement more groups
+### Symmmetry group ### (Only D4h is currently implemented) 
 
 def D4h_symmetry_operations():
-    # D4h group
-    # E, C4, C4_-1, C2, C2'(x), C2'(y), C2''(xy), C2''(-xy), i, S4, S4_-1, sigma_h, sigma_v(x), sigma_v'(y), sigma_d(xy), sigma_d'(-xy)
-    # E
-    E = np.eye(3)
-    # C4
-    C4 = rotation_matrix([0, 0, 1], 90)
-    # C4_-1
-    C4_minus_1 = rotation_matrix([0, 0, 1], -90)
-    # C2
-    C2 = rotation_matrix([0, 0, 1], 180)
-    # C2'(x)
-    C2_prime = rotation_matrix([1, 0, 0], 180)
-    # C2'(y)
-    C2_double_prime = rotation_matrix([0, 1, 0], 180)
-    # C2''(xy)
-    C2_double_prime_xy = rotation_matrix([1, 1, 0], 180)
-    # C2''(-xy)
-    C2_double_prime_minus_xy = rotation_matrix([1, -1, 0], 180)
-    # i
-    i = inversion_matrix()
-    # S4
-    S4 = improper_rotation_matrix([0, 0, 1], 90)
-    # S4_-1
-    S4_minus_1 = improper_rotation_matrix([0, 0, 1], -90)
-    # sigma_h
-    sigma_h = reflection_matrix([0, 0, 1])
-    # sigma_v(x)
-    sigma_v_x = reflection_matrix([0, 1, 0])
-    # sigma_v'(y)
-    sigma_v_y = reflection_matrix([1, 0, 0])
-    # sigma_d(xy)
-    sigma_d_xy = reflection_matrix([1, -1, 0])
-    # sigma_d'(-xy)
-    sigma_d_minus_xy = reflection_matrix([1, 1, 0])
-    
-    # return a dict with name and matrix
+    """Returns dict {name: 3x3 matrix} for D4h symmetry operations."""
     return {
-        'E': E,
-        'C4': C4,
-        'C4_-1': C4_minus_1,
-        'C2': C2,
-        'C2\'(x)': C2_prime,
-        'C2\'(y)': C2_double_prime,
-        'C2\'\'(xy)': C2_double_prime_xy,
-        'C2\'\'(-xy)': C2_double_prime_minus_xy,
-        'i': i,
-        'S4': S4,
-        'S4_-1': S4_minus_1,
-        'sigma_h': sigma_h,
-        'sigma_v(x)': sigma_v_x,
-        'sigma_v\'(y)': sigma_v_y,
-        'sigma_d(xy)': sigma_d_xy,
-        'sigma_d\'(-xy)': sigma_d_minus_xy
+        'E': np.eye(3),
+        'C4': rotation_matrix([0,0,1], 90),
+        'C4_-1': rotation_matrix([0,0,1], -90),
+        'C2': rotation_matrix([0,0,1], 180),
+        "C2'(x)": rotation_matrix([1,0,0], 180),
+        "C2'(y)": rotation_matrix([0,1,0], 180),
+        "C2''(xy)": rotation_matrix([1,1,0], 180),
+        "C2''(-xy)": rotation_matrix([1,-1,0], 180),
+        'i': inversion_matrix(),
+        'S4': improper_rotation_matrix([0,0,1], 90),
+        'S4_-1': improper_rotation_matrix([0,0,1], -90),
+        'sigma_h': reflection_matrix([0,0,1]),
+        "sigma_v(x)": reflection_matrix([0,1,0]),
+        "sigma_v'(y)": reflection_matrix([1,0,0]),
+        "sigma_d(xy)": reflection_matrix([1,-1,0]),
+        "sigma_d'(-xy)": reflection_matrix([1,1,0])
     }
     
+# Insert more symmetry groups here as needed
     
