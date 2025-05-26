@@ -68,7 +68,7 @@ Note: For large cases, only statistics are shown (no plotting) to keep the inter
 
 Try the app instantly (no installation needed):
 
-https://crystal-configuration-generator-42dau7snrjleakmbof5pxd.streamlit.app/
+https://crystal-configuration-generator-cwrckzv5wx5hmrmxxxayz6.streamlit.app/
 
 ## Handling Large Configuration Spaces
 
