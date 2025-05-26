@@ -40,9 +40,9 @@ coordinates_reduced_sphere = [
 
 ENUM_MAX = 30_000_000  # switch to Burnside above this many total configs
 
-def get_unique_configs(n_br, coords, perms, enum_max=ENUM_MAX, sphere=1):
+def get_unique_configs(n_i, coords, perms, enum_max=ENUM_MAX, sphere=1):
     """
-    Enumerate unique configurations for placing `n_br` Br atoms among the given coordinates,
+    Enumerate unique configurations for placing `n_i` I atoms among the given coordinates,
     using symmetry operations specified by `perms`.
 
     Tries direct enumeration if the total number of configurations is less than `enum_max`.
@@ -50,8 +50,8 @@ def get_unique_configs(n_br, coords, perms, enum_max=ENUM_MAX, sphere=1):
 
     Parameters
     ----------
-    n_br : int
-        Number of Br atoms to place.
+    n_i : int
+        Number of I atoms to place.
     coords : list of lists
         List of coordinate positions (for all sites).
     perms : list of lists
@@ -71,9 +71,9 @@ def get_unique_configs(n_br, coords, perms, enum_max=ENUM_MAX, sphere=1):
         Total number of possible configurations.
     """
     n_sites = len(coords)
-    uniq_dict, n_total = enumerate_unique(n_sites, n_br, perms, enum_max)
+    uniq_dict, n_total = enumerate_unique(n_sites, n_i, perms, enum_max)
     if uniq_dict is None:  
-        n_unique = burnside_count(n_sites, n_br, sphere=sphere, perms=perms)
+        n_unique = burnside_count(n_sites, n_i, sphere=sphere, perms=perms)
         return {}, n_unique, n_total
     n_unique = len(uniq_dict)
     return uniq_dict, n_unique, n_total
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--sphere", type=int, default=1, choices=[1,2,3],
                         help="Which sphere to use: 1=first, 2=second, 3=reduced (default: 1)")
-    parser.add_argument("--nbr", type=int, default=2, help="Number of Br atoms (default: 2)")
+    parser.add_argument("--ni", type=int, default=2, help="Number of I atoms (default: 2)")
     parser.add_argument("--enum-max", type=int, default=30_000_000,
                         help="Switch to Burnside above this number of configs (default: 30,000,000)")
     parser.add_argument("--save-svg", "-s", action='store_true',
@@ -93,7 +93,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     SPHERE = args.sphere
-    N_BR = args.nbr
+    N_I = args.ni
     ENUM_MAX = args.enum_max
 
     if SPHERE == 1:
@@ -117,12 +117,12 @@ if __name__ == "__main__":
         print("...Burnside cache created!")
 
     deg_dict, n_unique, n_total = get_unique_configs(
-        N_BR, coordinates, perms, enum_max=ENUM_MAX, sphere=SPHERE
+        N_I, coordinates, perms, enum_max=ENUM_MAX, sphere=SPHERE
     )
 
     elapsed = time.time() - start
 
-    print(f"Br atoms: {N_BR} on {len(coordinates)} sites")
+    print(f"I atoms: {N_I} on {len(coordinates)} sites")
     print(f"Total configurations:  {n_total:,}")
     print(f"Unique configurations: {n_unique:,}")
     print(f"Elapsed time: {elapsed:.2f} s")
@@ -139,7 +139,7 @@ if __name__ == "__main__":
             full_coords = [[0, 0, 0]] + coordinates
             structures.append((full_coords, symbols, title))
 
-        svg_dir = f"svg_configs_sphere{SPHERE}_Br{N_BR}_I{len(coordinates)-N_BR}"
-        prefix = f"Br{N_BR}_I{len(coordinates)-N_BR}"
+        svg_dir = f"svg_configs_sphere{SPHERE}_I{N_I}_Br{len(coordinates)-N_I}"
+        prefix = f"I{N_I}_Br{len(coordinates)-N_I}"
         vis.save_structures_as_svgs(structures, svg_dir, prefix=prefix)
         print(f"SVG images saved in folder: {svg_dir}")

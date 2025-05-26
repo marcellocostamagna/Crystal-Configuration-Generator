@@ -38,7 +38,7 @@ To enumerate unique configurations for a chosen coordination sphere and Br conte
 python scripts/get_configurations.py --sphere 1 --nbr 2 --save-svg
 ```
 - `--sphere` Select the coordination sphere: 1 (first), 2 (second), 3 (reduced).
-- `--nbr`  Number of Br atoms.
+- `--ni`  Number of I atoms.
 - `--save-svg` Save SVG images of all unique configurations (if not too many).
 - See `python scripts/get_configurations.py --help` for all options
 
@@ -56,7 +56,7 @@ streamlit run CCG.py
 You can select:
 - The coordination sphere,
 
-- The number of Br atoms,
+- The number of I atoms,
 
 - Whether to show axes,
 

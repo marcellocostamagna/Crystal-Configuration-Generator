@@ -53,7 +53,7 @@ def plot_molecular_structure(coordinates, symbols, title, elevation=1.5, azimuth
     fig = go.Figure()
 
     # Define a color map based on the labels
-    color_map = {'I': 'red', 'Br': 'blue'}
+    color_map = {'Br': 'red', 'I': 'blue'}
 
     # Add scatter plot for atoms
     for i, c in enumerate(coordinates):
@@ -116,7 +116,7 @@ def plot_multiple_structures(structures, elevation=1.5, azimuth=1.5, show_axis=F
         fig = go.Figure()
 
         # Define a color map based on the labels
-        color_map = {'I': 'red', 'Br': 'blue'}
+        color_map = {'Br': 'red', 'I': 'blue'}
 
         # Add atoms as scatter plot points
         for i, c in enumerate(coordinates):

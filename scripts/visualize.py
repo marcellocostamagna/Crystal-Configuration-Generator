@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 import os
 
 def get_connections(num_atoms):
@@ -70,7 +69,7 @@ def save_structures_as_svgs(structures, outdir, prefix='', elevation=20, azimuth
     if not os.path.exists(outdir):
         os.makedirs(outdir)
 
-    color_map = {'I': 'red', 'Br': 'blue'}
+    color_map = {'Br': 'red', 'I': 'blue'}
 
     for idx, (coordinates, symbols, title) in enumerate(structures):
         fig = plt.figure(figsize=(5, 5))

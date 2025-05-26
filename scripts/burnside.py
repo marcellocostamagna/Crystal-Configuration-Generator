@@ -4,7 +4,7 @@ using Burnside's lemma.
 
 This module enables to:
   - Precompute and cache the cycle structure of all symmetry operations for a site set.
-  - Quickly compute, for any number k of Br atoms, the number of unique configurations
+  - Quickly compute, for any number k of I atoms, the number of unique configurations
     (i.e., orbits) under symmetry, without explicit enumeration.
   - Autogenerate the cache if missing (with the group permutations provided).
 
@@ -56,7 +56,7 @@ def prepare_cycle_cache(permutations, group_order=16, sphere=1):
 
 def burnside_count(N, k, sphere=1, perms=None, group_order=16):
     """
-    Calculates the number of symmetry-unique ways to place k Br atoms on N sites,
+    Calculates the number of symmetry-unique ways to place k I atoms on N sites,
     under the action of a symmetry group, using Burnside's lemma.
 
     If the cycle cache does not exist for this sphere, and `perms` is given,
@@ -64,7 +64,7 @@ def burnside_count(N, k, sphere=1, perms=None, group_order=16):
 
     Parameters:
         N:      Number of sites (int).
-        k:      Number of Br atoms (int).
+        k:      Number of I atoms (int).
         sphere: Integer ID for the site set (default 1).
         perms:  List of group permutations (if cache needs to be built).
         group_order: Order of the symmetry group (default 16 for D4h).

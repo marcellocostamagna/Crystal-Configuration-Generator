@@ -3,7 +3,7 @@ Script for the explicit enumeration of unique Br/I configurations
 (up to symmetry) on a finite set of sites, given a list of symmetry operations.
 
 This module:
-- Efficiently enumerates all possible Br arrangements with k Br atoms on N sites,
+- Efficiently enumerates all possible I arrangements with k I atoms on N sites,
   avoiding redundant work by canonicalizing each configuration under the symmetry group.
 - Uses bitwise encoding (integers as bitvectors) for each configuration,
   making permutation and comparison fast and memory-light.
@@ -93,11 +93,11 @@ def _worker(task):
 
 def enumerate_unique(N, k, permutations, enum_max=30_000_000):
     """
-    Enumerate all unique (up to symmetry) Br/I configurations for k Br on N sites.
+    Enumerate all unique (up to symmetry) Br/I configurations for k I on N sites.
 
     Parameters:
         N:           Number of sites.
-        k:           Number of Br atoms.
+        k:           Number of I atoms.
         permutations: List of symmetry permutations (as lists/tuples of indices).
         enum_max:    Maximum allowed total combinations before switching to fallback.
 

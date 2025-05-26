@@ -79,23 +79,23 @@ enum_max = st.number_input(
     "Max configs for enumeration (otherwise Burnside, no visualization)", value=30_000_000, min_value=1000
 )
 if sphere == 1:
-    num_br = st.slider('Number of Br Atoms', 0, 7, 1)
+    num_i = st.slider('Number of I Atoms', 0, 7, 1)
     coordinates = coordinates_first_sphere
 elif sphere == 2:
-    num_br = st.slider('Number of Br Atoms', 0, 28, 1)
+    num_i = st.slider('Number of I Atoms', 0, 28, 1)
     coordinates = coordinates_second_sphere
 else:
-    num_br = st.slider('Number of Br Atoms', 0, 4, 1)
+    num_i = st.slider('Number of I Atoms', 0, 4, 1)
     coordinates = coordinates_reduced_sphere
 
 show_axis = st.checkbox('Show Axis', value=True)
 if st.button('Generate Configurations'):
     start = time.time()
-    uniq_dict, n_unique, n_total, can_visualize = get_streamlit_configs(num_br, coordinates, enum_max, sphere=sphere)
+    uniq_dict, n_unique, n_total, can_visualize = get_streamlit_configs(num_i, coordinates, enum_max, sphere=sphere)
     elapsed = time.time() - start
 
-    st.markdown(f"**Number of Br atoms:** {num_br}")
-    st.markdown(f"**Number of I atoms:** {len(coordinates) - num_br}")
+    st.markdown(f"**Number of I atoms:** {num_i}")
+    st.markdown(f"**Number of Br atoms:** {len(coordinates) - num_i}")
     st.markdown(f"**Total number of configurations:** {n_total:,}")
     st.markdown(f"**Total number of unique configurations:** {n_unique:,}")
     st.markdown(f"**Time taken:** {elapsed:.2f} seconds")
@@ -106,9 +106,9 @@ if st.button('Generate Configurations'):
         structures = []
         for idx, (config_int, degeneracy) in enumerate(uniq_dict.items()):
             bits = [(config_int >> i) & 1 for i in range(len(coordinates))]
-            symbols = ['I'] * (len(coordinates) + 1)
+            symbols = ['Br'] * (len(coordinates) + 1)
             for i, b in enumerate(bits):
-                symbols[i + 1] = 'Br' if b else 'I'
+                symbols[i + 1] = 'I' if b else 'Br'
             title = f"Config {idx+1}: Degeneracy {degeneracy}"
             full_coords = [[0, 0, 0]] + coordinates
             structures.append((full_coords, symbols, title))
